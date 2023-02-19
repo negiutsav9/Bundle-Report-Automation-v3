@@ -30,7 +30,12 @@ bundle_dates = ["11/01/2021", "05/02/2021", "10/03/2021", "04/04/2021", "09/05/2
   "11/28/2022","12/12/2022","12/27/2022", "01/09/2023","01/23/2023","02/06/2023"]
 '''
 
-bundle_dates = pd.read_csv("./pages/dates.csv").iloc[:,0].tolist()
+if(os.stat("./pages/dates.csv").st_size != 0):
+    bundle_dates = pd.read_csv("./pages/dates.csv", header=None)[0].tolist()
+else:
+    bundle_dates = []
+
+print(bundle_dates)
 
 jira_obj = JIRA(os.getenv("HOST_URL"),basic_auth=(os.getenv("JIRA_USER_ID"),os.getenv("JIRA_API_KEY")))
 
@@ -39,6 +44,8 @@ bundle_header = ["JIRA #", "Summary", "Team", "Bundle Status", "JIRA Status", "A
  "PHIRE CR#", "CR Type", "HRS/EPM Date", "Off Bundle Reason", "Project Association"]
 
 audit_header = ["Phire CR Number", "JIRA Tracking #", "Target DB", "Migrated On", "Migrated By", "CR Type", "Query"]
+
+summary = pd.DataFrame(columns=bundle_header)
 
 def classify_category(project_title):
     project_type = ""
@@ -176,6 +183,11 @@ def process_jira(jira_obj, row, bundle_status):
     return new_bundle_obj
 
 def processCSV(data,type):
+    bundle_rows_incl.clear()
+    bundle_rows_off.clear()
+    bundle_rows_data.clear()
+    bundle_rows_org.clear()
+    phire_audit_list.clear()
     count = 0
     #segregating bundle data into lists based on on-bundle, off-bundle, data update
     total_count = data.shape[0]
@@ -210,6 +222,16 @@ def processCSV(data,type):
         print("Processing ",type,": ",count,"/",total_count, "  Included in Bundle: ", len(bundle_rows_incl), 
         " Off-Bundle: ", len(bundle_rows_off), " Data Update: ", len(bundle_rows_data), " Org Dept Update: ", len(bundle_rows_org))
 
+    #Adding Included Row
+    for issue in bundle_rows_incl:
+        summary.loc[len(summary.index)] = issue
+    #Adding Off-bundle Row
+    for issue in bundle_rows_off:
+        summary.loc[len(summary.index)] = issue
+    #Adding Data Updates
+    for issue in bundle_rows_data:
+        summary.loc[len(summary.index)] = issue
+
 def processOrg(startDate, endDate, type):
     #Creating a search query of organizational update
     org_issues = jira_obj.search_issues('(labels = FY'+fiscal_year_1+'OrgDept OR labels = FY'+fiscal_year_2+'OrgDept) AND (updated >= ' + startDate.strftime("%Y-%m-%d") + ' AND updated <= ' + endDate.strftime("%Y-%m-%d") + ') ORDER BY updated DESC')
@@ -230,23 +252,13 @@ def processOrg(startDate, endDate, type):
             phire_audit_list.append(phire_result.toList())
             print("Processing ",type + ": ",issue_count,"/",len(org_issues), "  Included in Bundle: ", len(bundle_rows_incl), 
             " Off-Bundle: ", len(bundle_rows_off), " Data Update: ", len(bundle_rows_data), " Org Dept Update: ", len(bundle_rows_org))
+    #Adding Org Dept Updates
+    for issue in bundle_rows_org:
+        summary.loc[len(summary.index)] = issue
     else:
         print("NO ORGANIZATION DEPARTMENT UPDATE AT THIS TIME")
 
 def showBundleSummary():
-    summary = pd.DataFrame(columns=bundle_header)
-    #Adding Included Row
-    for issue in bundle_rows_incl:
-        summary.loc[len(summary.index)] = issue
-    #Adding Off-bundle Row
-    for issue in bundle_rows_off:
-        summary.loc[len(summary.index)] = issue
-    #Adding Org Dept Updates
-    for issue in bundle_rows_org:
-        summary.loc[len(summary.index)] = issue
-    #Adding Data Updates
-    for issue in bundle_rows_data:
-        summary.loc[len(summary.index)] = issue
     return summary
 
 def export_bundle(out_stream = 'BundleList.xlsx', bundle_rows_incl = [], bundle_rows_off = [], bundle_rows_data = [], bundle_rows_org = [], phire_audit_list=[]):

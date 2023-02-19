@@ -11,6 +11,8 @@ st.write("\n")
 st.write("\n")
 st.header("Current Migration Dates")
 
+
+
 st.sidebar.header("Add a Date")
 add_form = st.sidebar.form("add_form")
 new_date = add_form.date_input("New Migration Date")

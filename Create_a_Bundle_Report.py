@@ -41,6 +41,7 @@ if submitForm:
     st.dataframe(bundleSummary, use_container_width=True)
     st.header("Statistics")
     stats_Status = bundleSummary['Bundle Status'].value_counts().to_dict()
+    st.write(stats_Status)
     stats_Team = bundleSummary["Team"].value_counts().to_dict()
     stats_Type = bundleSummary["CR Type"].value_counts().to_dict()
     stats_Category = bundleSummary["Category"].value_counts().to_dict()
@@ -97,7 +98,7 @@ if submitForm:
         st.button("Attach the report to JIRA")
 else:
     st.title('Bundle Report Generator')
-    st.write("This tool is used to create bundle report which summarizes the changes that are migrated to the University of Wisconsin's Human Resource System")
+    st.write("This tool is used to create bundle report which summarizes the changes that are migrated to the University of Wisconsin's Human Resoruce System")
     st.write("\n")
     st.write("\n")
     st.write("\n")
