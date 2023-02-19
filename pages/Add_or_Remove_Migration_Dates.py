@@ -3,7 +3,7 @@ import pandas as pd
 import os
 import numpy as np
 
-dates = pd.read_csv(os.getcwd() + '\pages\dates.csv', header=None) 
+dates = pd.read_csv(os.getcwd() + '/pages/dates.csv', header=None) 
 
 st.title("Add or Remove Migration Dates")
 st.header("Current Migration Dates")
