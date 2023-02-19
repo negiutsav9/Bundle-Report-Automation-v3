@@ -97,7 +97,7 @@ if submitForm:
         st.button("Attach the report to JIRA")
 else:
     st.title('Bundle Report Generator')
-    st.write("This tool is used to create bundle report which summarizes the changes that are migrated to the University of Wisconsin's Human Resoruce System")
+    st.write("This tool is used to create bundle report which summarizes the changes that are migrated to the University of Wisconsin's Human Resource System")
     st.write("\n")
     st.write("\n")
     st.write("\n")
