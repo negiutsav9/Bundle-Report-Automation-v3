@@ -3,9 +3,12 @@ import pandas as pd
 import os
 import numpy as np
 
-dates = pd.read_csv(os.getcwd() + '/pages/dates.csv', header=None) 
+
+file_path = os.getcwd() + '/pages/dates.csv'
 
 st.title("Add or Remove Migration Dates")
+st.write("\n")
+st.write("\n")
 st.header("Current Migration Dates")
 
 st.sidebar.header("Add a Date")
@@ -20,15 +23,24 @@ if(submitAdd):
     new_df.to_csv(os.getcwd() + '/pages/dates.csv', mode='a', index=False, header=False)
     st.experimental_rerun()
 
-st.sidebar.header("Remove a Date")
-remove_form = st.sidebar.form("remove_form")
-remove_date = remove_form.date_input("Migration Date to be removed")
-submitRemove = remove_form.form_submit_button("Remove the migration date")
-if(submitRemove):
-    remove_date = remove_date.strftime('%m/%d/%Y')
-    dates = dates.loc[dates[0] != remove_date]
-    dates.to_csv(os.getcwd() + '/pages/dates.csv', mode='w', index=False, header=False)
-    st.experimental_rerun()
+if(os.stat(file_path).st_size == 0):
+    st.write("\n")
+    st.write("\n")
+    st.write("No migration dates in the bundle report generator")
+    st.write("\n")
+    st.write("To enter a date, use the form in the sidebar")
+else:
+    dates = pd.read_csv(os.getcwd() + '/pages/dates.csv', header=None) 
 
-dates.columns = ["Migration Date","JIRA","Pay Period"]
-st.dataframe(dates, use_container_width=True)
+    st.sidebar.header("Remove a Date")
+    remove_form = st.sidebar.form("remove_form")
+    remove_date = remove_form.date_input("Migration Date to be removed")
+    submitRemove = remove_form.form_submit_button("Remove the migration date")
+    if(submitRemove):
+        remove_date = remove_date.strftime('%m/%d/%Y')
+        dates = dates.loc[dates[0] != remove_date]
+        dates.to_csv(os.getcwd() + '/pages/dates.csv', mode='w', index=False, header=False)
+        st.experimental_rerun()
+
+    dates.columns = ["Migration Date","JIRA","Pay Period"]
+    st.dataframe(dates, use_container_width=True)
