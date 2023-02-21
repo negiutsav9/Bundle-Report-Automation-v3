@@ -187,11 +187,6 @@ def process_jira(jira_obj, row, bundle_status):
     return new_bundle_obj
 
 def processCSV(data,type):
-    bundle_rows_incl.clear()
-    bundle_rows_off.clear()
-    bundle_rows_data.clear()
-    bundle_rows_org.clear()
-    phire_audit_list.clear()
     count = 0
     #segregating bundle data into lists based on on-bundle, off-bundle, data update
     total_count = data.shape[0]
