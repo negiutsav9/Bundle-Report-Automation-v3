@@ -36,7 +36,10 @@ def init_connection():
 supabase = init_connection()
 
 bundle_dates_data = supabase.table("dates").select("*").execute().data
-bundle_dates = pd.DataFrame(bundle_dates_data)["migration_date"].tolist()
+if(len(bundle_dates_data) != 0):
+    bundle_dates = pd.DataFrame(bundle_dates_data)["migration_date"].tolist()
+else:
+    bundle_dates = []
 
 jira_obj = JIRA(os.getenv("HOST_URL"),basic_auth=(os.getenv("JIRA_USER_ID"),os.getenv("JIRA_API_KEY")))
 
