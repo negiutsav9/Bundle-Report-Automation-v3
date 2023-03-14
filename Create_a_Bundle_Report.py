@@ -221,15 +221,6 @@ def processCSV(data,type):
         print("Processing ",type,": ",count,"/",total_count, "  Included in Bundle: ", len(bundle_rows_incl), 
         " Off-Bundle: ", len(bundle_rows_off), " Data Update: ", len(bundle_rows_data), " Org Dept Update: ", len(bundle_rows_org))
 
-    #Adding Included Row
-    for issue in bundle_rows_incl:
-        summary.loc[len(summary.index)] = issue
-    #Adding Off-bundle Row
-    for issue in bundle_rows_off:
-        summary.loc[len(summary.index)] = issue
-    #Adding Data Updates
-    for issue in bundle_rows_data:
-        summary.loc[len(summary.index)] = issue
 
 def processOrg(startDate, endDate, type):
     #Creating a search query of organizational update
@@ -258,6 +249,16 @@ def processOrg(startDate, endDate, type):
         print("NO ORGANIZATION DEPARTMENT UPDATE AT THIS TIME")
 
 def showBundleSummary():
+    #Adding Included Row
+    for issue in bundle_rows_incl:
+        summary.loc[len(summary.index)] = issue
+    #Adding Off-bundle Row
+    for issue in bundle_rows_off:
+        summary.loc[len(summary.index)] = issue
+    #Adding Data Updates
+    for issue in bundle_rows_data:
+        summary.loc[len(summary.index)] = issue
+    
     return summary
 
 def export_bundle(out_stream = 'BundleList.xlsx', bundle_rows_incl = [], bundle_rows_off = [], bundle_rows_data = [], bundle_rows_org = [], phire_audit_list=[]):
